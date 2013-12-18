@@ -1,0 +1,21 @@
+#!/bin/bash
+
+export DISPLAY=:0
+MONITOR_ON=$(xset -q | grep -q "Monitor is On")$?
+
+turn-on()
+{
+	xset dpms force on
+	xset s reset
+}
+
+turn-off()
+{
+	xset dpms force off
+}
+
+case $1 in
+	off)    turn-off ;;
+	on)     turn-on  ;;
+	toggle) [[ $MONITOR_ON  == 0 ]] && turn-off || turn-on ;;
+esac

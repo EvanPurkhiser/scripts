@@ -1,0 +1,21 @@
+#!/bin/bash
+
+PRIVATE_KEY="9113a258d75d7c04"
+CHANNELS=$(curl -s "http://listen.di.fm/public3" | grep -o '"key":"[^"]*"' | sed -E 's/"key":"([^"]+)"/\1/g')
+CH_COUNT=$(echo "${CHANNELS}" | wc -l)
+
+mpc clear
+
+echo "Loading channels into playlist.."
+for name in ${CHANNELS};
+do
+	mpc add $(curl -s "http://listen.di.fm/premium_high/${name}.pls?listen_key=${PRIVATE_KEY}" | grep -m 1 -o "http://.*$")
+done
+
+echo "Now loading actual titles by playing each track for 0.5s"
+for track in $(seq 1 ${CH_COUNT})
+do
+	echo -ne "Track ${track}/${CH_COUNT}\r"
+	mpc -q play ${track}
+	sleep 0.5
+done

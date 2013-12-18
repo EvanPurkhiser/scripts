@@ -1,0 +1,6 @@
+#!/bin/bash
+
+curl -s \
+	-H "Content-Type: application/json" \
+	--data-binary '{ "jsonrpc": "2.0", "method": "VideoLibrary.Clean", "id": "xbmc-clean"}' \
+	htpc:8080/jsonrpc > /dev/null

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+WINEPREFIX=$XDG_DATA_HOME/wine/wow WINEDEBUG=-all exec wine "/home/evan/.local/share/wine/wow/drive_c/Program Files (x86)/World of Warcraft/WoW.exe"

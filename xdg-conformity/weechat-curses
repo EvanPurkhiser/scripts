@@ -1,0 +1,2 @@
+#!/bin/bash
+exec /usr/bin/weechat-curses -d "$XDG_CONFIG_HOME/weechat" $@
