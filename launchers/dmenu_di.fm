@@ -2,6 +2,6 @@
 
 export MPD_HOST=htpc
 
-TITLE=$(mpc playlist | sed -E 's/([^\-]+)-.*/\1/g' | dmenu -i -b -p "Digitally Imported");
+TITLE=$(mpc playlist | sed -E 's/([^\-]+)-.*/\1/g' | dmenu -dim 0.3 -w 180 -l 15 -i -x 750 -y 20);
 [ "$TITLE" = "" ] && exit
 mpc play $(mpc playlist | grep -n "^$TITLE" | awk -F: '{print $1}')
