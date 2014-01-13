@@ -66,4 +66,3 @@ read answer
 if [[ "$answer" =~ (y|Y|yes) ]]; then
 	git push origin v$version $(git branch --contains v$version | cut -b 3-)
 fi
-
