@@ -1,0 +1,10 @@
+#!/bin/bash
+# Convert all WAV files to AIFF files
+
+shopt -s globstar
+
+for file in ${1-.}/**/*.wav
+do
+	ffmpeg -i "$file" -y -f aiff -- "${file%\.*}.aif"
+	rm "$file"
+done
