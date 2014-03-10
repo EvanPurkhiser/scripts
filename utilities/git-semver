@@ -50,7 +50,7 @@ if [[ "$answer" =~ (y|Y|yes) ]]; then
 	[ $major -eq 0 ] && latest_message_version="$latest_message_version Beta"
 
 	# Add the tag
-	git tag -a v$version -m "$tag_message" > /dev/null
+	git tag -a v$version
 
 	echo "Latest tags:"
 	git tag -n1 | tail -n5
