@@ -3,7 +3,7 @@
 
 shopt -s globstar
 
-for file in ${1-.}/**/*.wav
+for file in ${1-.}/**/*.{wav,flac}
 do
 	ffmpeg -i "$file" -y -f aiff -- "${file%\.*}.aif"
 	[[ $? == 0 ]] && rm "$file"
