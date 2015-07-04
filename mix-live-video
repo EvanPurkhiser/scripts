@@ -1,0 +1,66 @@
+# An RTMP location to 
+rtmp_app="rtmp://live.twitch.tv/app/${TWITCH_KEY}"
+
+# Location to save the audio video stream
+file_path="/home/evan/scratch/live-stream-$(date +"%m-%d-%y_%H-%M")"
+
+# Configure the camera
+v4l2-ctl -d /dev/video0 -c focus_auto=0
+v4l2-ctl -d /dev/video0 -c focus_absolute=1
+
+v4l2-ctl -d /dev/video0 -c exposure_auto=1
+v4l2-ctl -d /dev/video0 -c exposure_absolute=400
+
+v4l2-ctl -d /dev/video0 -c saturation=128
+v4l2-ctl -d /dev/video0 -c brightness=160
+
+# Setup a gstreamer pipeline for streaming video.
+#
+#  * Streams video to Twitch
+#  * Saves into a high quality file
+#  * Displays a live preview video
+#
+# Audio:
+#
+#  * A 3.2 factor volume increase is applied, this equates out to about 10db of
+#    volume increase, which gets us closer to 0db.
+#
+#  * The livestream audio is converted to AAC-LC 160kbs, which is the maximum
+#    allowed by twitch. The audio written into the file is raw 48khz 16bit PCM.
+#
+# Video: 
+#
+#  * The video from the webcam is taken as raw h264 encoded data, since this
+#    happens onboard the webcam in hardware. 
+#
+gst-launch-1.0 -e \
+     pulsesrc device='alsa_input.pci-0000_05_00.0.iec958-stereo'\
+          ! queue \
+          ! audio/x-raw,rate=48000,channels=2 \
+          ! tee name=audio \
+     v4l2src device=/dev/video0 do-timestamp=true \
+          ! queue \
+          ! video/x-h264,width=1920,height=1080,framerate=30/1 \
+          ! h264parse \
+          ! tee name=video \
+     audio.\
+          ! queue \
+          ! volume volume=3.2 \
+          ! faac bitrate=160000 \
+          ! liveMux. \
+     video. \
+          ! queue \
+          ! liveMux. \
+     flvmux name=liveMux streamable=true \
+          ! rtmpsink location="$rtmp_app" \
+     video. \
+          ! queue \
+          ! fileMux. \
+     audio. \
+          ! queue \
+          ! fileMux. \
+     matroskamux name=fileMux \
+          ! filesink location="${file_path}.mkv" \
+     video. \
+          ! avdec_h264 \
+          ! xvimagesink sync=false

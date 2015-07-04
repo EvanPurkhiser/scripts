@@ -1,0 +1,12 @@
+#!/bin/bash
+
+DEVICE=alsa_input.pci-0000_05_00.0.iec958-stereo
+
+DATE="$(date +"%b %d, %Y %r")"
+SAVE="$HOME/scratch/recording-$(date +"%m-%d-%y_%H-%M").flac"
+
+# Check that the source device is available
+! pactl list short | grep -q "$DEVICE" && echo "stream: Pulse device not plugged in!" && exit
+
+# Start the stream and record to a MP3
+ffmpeg  -f pulse -i "$DEVICE" -f flac "$SAVE"
