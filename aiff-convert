@@ -1,0 +1,28 @@
+#!/bin/bash
+# Recursively convert all WAV/FLAC files to AIFF files
+
+function aif_convert()
+{
+    ffmpeg -hide_banner -i "$1" -y -f aiff -write_id3v2 1 -- "${1%\.*}.aif"
+    [[ $? == 0 ]] && rm "$1"
+}
+
+shopt -s globstar
+
+convert_path="${1-$PWD}"
+
+# Convert a single file
+if [ -f "$convert_path" ]
+then
+    aif_convert "$convert_path"
+    exit 0
+fi
+
+# Convert a directory
+if [ ! -d "$convert_path" ]
+then
+    echo "The first argument should specify a file or directory."
+    exit 1
+fi
+
+for file in "$convert_path"/**/*.{wav,flac}; do aif_convert "$file"; done
