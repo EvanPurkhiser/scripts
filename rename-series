@@ -37,8 +37,14 @@ end
 def find_episode_numbers(files)
     numbers = files.sort.map { |f| f.scan(/[0-9]+/).map(&:to_i) }
 
+    # Ensure all arrays are equal in size to for transpose to be a success. We
+    # are making the assumption here that there will not be any strange numbers
+    # *before* the episode number.
+    size = numbers.map(&:length).max
+    numbers.map! { |n| n + Array.new(size - n.length, 0) }
+
+    # Find the consecutive array. These are the episode numbers
     ordered = numbers.transpose.select do |items|
-        # Find the consecutive array. These are the episode numbers
         items.each_cons(2).all? { |a,b| a < b }
     end
 
