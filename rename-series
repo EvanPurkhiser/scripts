@@ -84,7 +84,7 @@ end
 file_names = episode_map.map { |f,e| format_episode options.season, e, f }
 rename_map = episode_map.keys.zip(file_names).to_h
 
-abort('No files to rename.')  if rename_map.empty?
+abort('No files to rename.') if rename_map.empty?
 
 # Output rename map
 rename_map.each { |o,n| print o, ' → ', n, "\n"  }
